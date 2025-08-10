@@ -1,4 +1,9 @@
 definitions:
+  domain.ErrorResponse:
+    properties:
+      message:
+        type: string
+    type: object
   domain.OperationType:
     enum:
     - redirection
@@ -44,9 +49,17 @@ paths:
           schema:
             $ref: '#/definitions/domain.URLResponse'
         "400":
-          description: Invalid input
+          description: Invalid input or invalid body request
           schema:
-            type: string
+            $ref: '#/definitions/domain.ErrorResponse'
+        "405":
+          description: Method Not Allowed
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
       summary: Process a given URL
       tags:
       - URL

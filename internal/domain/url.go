@@ -8,3 +8,7 @@ type URLRequest struct {
 type URLResponse struct {
     ProcessedURL string `json:"processed_url"`
 }
+
+type ErrorResponse struct {
+    Message string `json:"message"`
+}

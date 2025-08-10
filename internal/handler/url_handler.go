@@ -26,11 +26,13 @@ func NewURLHandler(urlService *service.URLService) *URLHandler {
 // @Produce  json
 // @Param request body domain.URLRequest true "URL and operation"
 // @Success 200 {object} domain.URLResponse
-// @Failure 400 {string} string "Invalid input"
+// @Failure 400 {object} domain.ErrorResponse "Invalid input or invalid body request"
+// @Failure 405 {object} domain.ErrorResponse "Method Not Allowed"
+// @Failure 500 {object} domain.ErrorResponse "Internal Server Error"
 // @Router /process-url [post]
 func (h *URLHandler) ProcessURL(w http.ResponseWriter, r *http.Request) {
     if r.Method != http.MethodPost {
-        http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+        http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
         return
     }
 
@@ -41,7 +43,7 @@ func (h *URLHandler) ProcessURL(w http.ResponseWriter, r *http.Request) {
     decoder.DisallowUnknownFields()
 
     if err := decoder.Decode(&req); err != nil {
-        http.Error(w, "invalid body request: "+err.Error(), http.StatusBadRequest)
+        generateErrorResponse(w, http.StatusBadRequest, "Invalid body request: "+err.Error())
         return
     }
 
@@ -49,7 +51,7 @@ func (h *URLHandler) ProcessURL(w http.ResponseWriter, r *http.Request) {
     // Process the URL
     processedURL, err := h.urlService.ProcessURL(req.URL, req.Operation)
     if err != nil {
-        http.Error(w, "processing error: "+err.Error(), http.StatusBadRequest)
+        generateErrorResponse(w, http.StatusInternalServerError, "Error Processing URL: "+err.Error())
         return
     }
 
@@ -57,4 +59,11 @@ func (h *URLHandler) ProcessURL(w http.ResponseWriter, r *http.Request) {
 
     w.Header().Set("Content-Type", "application/json")
     json.NewEncoder(w).Encode(resp)
+}
+
+
+func generateErrorResponse(w http.ResponseWriter, status int, msg string) {
+    w.Header().Set("Content-Type", "application/json")
+    w.WriteHeader(status)
+    json.NewEncoder(w).Encode(domain.ErrorResponse{Message: msg})
 }
