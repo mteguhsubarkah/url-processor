@@ -5,6 +5,7 @@ import (
     "net/url"
     "strings"
     "url_processor/internal/domain"
+	"url_processor/internal/config"
 )
 
 type URLService struct{}
@@ -54,7 +55,7 @@ func (s *URLService) redirection(rawURL string) (string, error) {
     }
 
 	// redirect the host to byfood domain
-	parsedURL.Host = "www.byfood.com"
+	parsedURL.Host = config.Get(config.KeyDefaultHost)
 
 
     protocolScheme := strings.ToLower(parsedURL.Scheme) // take and lowercase the protocol scheme
