@@ -1,5 +1,7 @@
 package handler
 
+
+
 import (
     "encoding/json"
     "net/http"
@@ -15,6 +17,17 @@ func NewURLHandler(urlService *service.URLService) *URLHandler {
     return &URLHandler{urlService: urlService}
 }
 
+
+// ProcessURL godoc
+// @Summary Process a given URL
+// @Description Cleans or redirects a URL based on the operation type
+// @Tags URL
+// @Accept  json
+// @Produce  json
+// @Param request body domain.URLRequest true "URL and operation"
+// @Success 200 {object} domain.URLResponse
+// @Failure 400 {string} string "Invalid input"
+// @Router /process-url [post]
 func (h *URLHandler) ProcessURL(w http.ResponseWriter, r *http.Request) {
     if r.Method != http.MethodPost {
         http.Error(w, "method not allowed", http.StatusMethodNotAllowed)

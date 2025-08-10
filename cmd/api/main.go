@@ -7,6 +7,8 @@ import (
     "url_processor/internal/service"
     "url_processor/internal/handler"
     "url_processor/internal/config"
+    httpSwagger "github.com/swaggo/http-swagger"
+    _ "url_processor/docs"
 
 )
 
@@ -22,6 +24,7 @@ func main() {
     urlHandler := handler.NewURLHandler(urlService)
 
     http.HandleFunc("/process-url", urlHandler.ProcessURL)
+    http.Handle("/swagger/", httpSwagger.WrapHandler)
 
     log.Println("Server starting on %s", port)
     err := http.ListenAndServe(":"+port, nil)

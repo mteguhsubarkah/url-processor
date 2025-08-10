@@ -1,0 +1,53 @@
+definitions:
+  domain.OperationType:
+    enum:
+    - redirection
+    - canonical
+    - all
+    type: string
+    x-enum-varnames:
+    - OperationRedirection
+    - OperationCanonical
+    - OperationAll
+  domain.URLRequest:
+    properties:
+      operation:
+        $ref: '#/definitions/domain.OperationType'
+      url:
+        type: string
+    type: object
+  domain.URLResponse:
+    properties:
+      processed_url:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /process-url:
+    post:
+      consumes:
+      - application/json
+      description: Cleans or redirects a URL based on the operation type
+      parameters:
+      - description: URL and operation
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/domain.URLRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.URLResponse'
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+      summary: Process a given URL
+      tags:
+      - URL
+swagger: "2.0"
