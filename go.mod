@@ -1,3 +1,3 @@
-module github.com/mteguhsubarkah/url-processor
+module url_processor
 
 go 1.21.3
